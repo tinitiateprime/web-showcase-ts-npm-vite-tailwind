@@ -1,5 +1,13 @@
 import { Link } from "react-router-dom";
-import { FaHome, FaUser, FaBriefcase, FaInfoCircle, FaNodeJs, FaTools, FaWind, FaCode } from "react-icons/fa";
+import {
+  FaHome,
+  FaUser,
+  FaBriefcase,
+  FaInfoCircle,
+  FaNodeJs,
+  FaTools,
+  FaWind,
+} from "react-icons/fa";
 import { SiTypescript } from "react-icons/si";
 
 const Header = () => {
@@ -8,7 +16,7 @@ const Header = () => {
       <div className="container mx-auto px-4 py-6 flex flex-col items-center">
         {/* Title with icons */}
         <h1 className="flex flex-wrap justify-center items-center gap-3 text-3xl sm:text-4xl font-extrabold text-center mb-4 drop-shadow-md">
-          <span className="flex items-center gap-1 text-lightred-200">
+          <span className="flex items-center gap-1 text-red-100">
             <SiTypescript />
             ts
           </span>
@@ -35,6 +43,7 @@ const Header = () => {
             <FaHome />
             Home
           </Link>
+
           <Link
             to="/about"
             className="flex items-center gap-2 hover:text-black hover:bg-white px-3 py-1 rounded transition duration-300"
@@ -42,6 +51,7 @@ const Header = () => {
             <FaInfoCircle />
             About
           </Link>
+
           <Link
             to="/services"
             className="flex items-center gap-2 hover:text-black hover:bg-white px-3 py-1 rounded transition duration-300"
@@ -49,6 +59,7 @@ const Header = () => {
             <FaBriefcase />
             Services
           </Link>
+
           <Link
             to="/profile"
             className="flex items-center gap-2 hover:text-black hover:bg-white px-3 py-1 rounded transition duration-300"

@@ -1,13 +1,16 @@
 import { useState, useMemo, useEffect } from "react";
-import {
-  ChevronUp,
-  ChevronDown,
-  Search,
-  ArrowLeft,
-  ArrowRight,
-} from "lucide-react";
+import { ChevronUp, ChevronDown, Search, ArrowLeft, ArrowRight } from "lucide-react";
 
-const sampleData = [
+type Role = "Admin" | "Editor" | "Viewer";
+
+type UserRow = {
+  id: number;
+  name: string;
+  email: string;
+  role: Role;
+};
+
+const sampleData: UserRow[] = [
   { id: 1, name: "Alice", email: "alice@example.com", role: "Admin" },
   { id: 2, name: "Bob", email: "bob@example.com", role: "Editor" },
   { id: 3, name: "Charlie", email: "charlie@example.com", role: "Viewer" },
@@ -17,29 +20,39 @@ const sampleData = [
   { id: 7, name: "Grace", email: "grace@example.com", role: "Admin" },
 ];
 
-const roles = ["All", "Admin", "Editor", "Viewer"];
+const roles: Array<"All" | Role> = ["All", "Admin", "Editor", "Viewer"];
+
+type SortField = "name" | "email" | "role";
+type SortOrder = "asc" | "desc";
 
 const DataTable = () => {
-  const [query, setQuery] = useState("");
-  const [sortField, setSortField] = useState("name");
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [roleFilter, setRoleFilter] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
+  const [query, setQuery] = useState<string>("");
+  const [sortField, setSortField] = useState<SortField>("name");
+  const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
+  const [roleFilter, setRoleFilter] = useState<"All" | Role>("All");
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const itemsPerPage = 4;
 
-  const filteredData = useMemo(() => {
-    let data = sampleData.filter(
-      (item) =>
-        (item.name.toLowerCase().includes(query.toLowerCase()) ||
-          item.email.toLowerCase().includes(query.toLowerCase()) ||
-          item.role.toLowerCase().includes(query.toLowerCase())) &&
-        (roleFilter === "All" || item.role === roleFilter)
-    );
+  const filteredData = useMemo<UserRow[]>(() => {
+    const q = query.trim().toLowerCase();
+
+    let data = sampleData.filter((item) => {
+      const matchesQuery =
+        q.length === 0 ||
+        item.name.toLowerCase().includes(q) ||
+        item.email.toLowerCase().includes(q) ||
+        item.role.toLowerCase().includes(q);
+
+      const matchesRole = roleFilter === "All" || item.role === roleFilter;
+
+      return matchesQuery && matchesRole;
+    });
 
     data = data.sort((a, b) => {
-      const fieldA = a[sortField].toLowerCase();
-      const fieldB = b[sortField].toLowerCase();
+      const fieldA = String(a[sortField]).toLowerCase();
+      const fieldB = String(b[sortField]).toLowerCase();
+
       return sortOrder === "asc"
         ? fieldA.localeCompare(fieldB)
         : fieldB.localeCompare(fieldA);
@@ -48,13 +61,19 @@ const DataTable = () => {
     return data;
   }, [query, sortField, sortOrder, roleFilter]);
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
+
+  // If filter reduces pages, keep currentPage valid
+  useEffect(() => {
+    setCurrentPage((p) => Math.min(p, totalPages));
+  }, [totalPages]);
+
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  const handleSort = (field: string) => {
+  const handleSort = (field: SortField) => {
     if (sortField === field) {
       setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
@@ -64,8 +83,9 @@ const DataTable = () => {
   };
 
   useEffect(() => {
-    // Animate rows when component mounts
-    document.querySelectorAll("tr[data-animate]").forEach((row, i) => {
+    // Animate rows when component mounts / page changes
+    const rows = document.querySelectorAll<HTMLTableRowElement>("tr[data-animate]");
+    rows.forEach((row, i) => {
       setTimeout(() => row.classList.add("animate-row"), i * 80);
     });
   }, [paginatedData]);
@@ -73,7 +93,6 @@ const DataTable = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-200 via-pink-100 to-blue-200 p-6">
       <div className="max-w-6xl mx-auto backdrop-blur-xl bg-white/60 border border-white/40 shadow-2xl rounded-3xl p-10 animate-fadeIn">
-
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
           <h2 className="text-4xl font-extrabold tracking-tight flex items-center gap-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-pink-500 to-purple-600 animate-glow">
@@ -92,16 +111,19 @@ const DataTable = () => {
                 className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-300 shadow-inner bg-white text-black focus:ring-2 focus:ring-indigo-500 outline-none"
               />
             </div>
+
             <select
               className="px-3 py-2 rounded-xl bg-indigo-100 text-indigo-800 border border-indigo-300 outline-none"
               value={roleFilter}
               onChange={(e) => {
-                setRoleFilter(e.target.value);
+                setRoleFilter(e.target.value as "All" | Role);
                 setCurrentPage(1);
               }}
             >
               {roles.map((role) => (
-                <option key={role}>{role}</option>
+                <option key={role} value={role}>
+                  {role}
+                </option>
               ))}
             </select>
           </div>
@@ -112,7 +134,7 @@ const DataTable = () => {
           <table className="min-w-full divide-y divide-gray-300 text-sm text-left">
             <thead className="bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 uppercase text-xs">
               <tr>
-                {["name", "email", "role"].map((field) => (
+                {(["name", "email", "role"] as const).map((field) => (
                   <th
                     key={field}
                     onClick={() => handleSort(field)}
@@ -131,6 +153,7 @@ const DataTable = () => {
                 ))}
               </tr>
             </thead>
+
             <tbody className="bg-white divide-y divide-gray-100">
               {paginatedData.length ? (
                 paginatedData.map((user) => (
@@ -189,6 +212,7 @@ const DataTable = () => {
             {Math.min(currentPage * itemsPerPage, filteredData.length)} of{" "}
             {filteredData.length} results
           </span>
+
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
@@ -197,9 +221,11 @@ const DataTable = () => {
             >
               <ArrowLeft size={16} />
             </button>
+
             <span>
               Page {currentPage} of {totalPages}
             </span>
+
             <button
               onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               disabled={currentPage === totalPages}

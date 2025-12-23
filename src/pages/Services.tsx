@@ -1,22 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  Code, 
-  Smartphone, 
-  Globe, 
-  Brain, 
-  Zap, 
-  Shield, 
-  ArrowRight, 
-  Star, 
-  Check,
-  Play,
+import { useState, useEffect, useRef } from "react";
+import {
+  Code,
+  Smartphone,
+  Globe,
+  Brain,
+  Zap,
+  Shield,
+  ArrowRight,
   Sparkles,
-  ChevronRight,
-  MousePointer,
   Layers,
   Palette,
-  Cpu
-} from 'lucide-react';
+  Cpu,
+} from "lucide-react";
 
 const ServicesPage: React.FC = () => {
   const [activeService, setActiveService] = useState(0);
@@ -35,30 +30,34 @@ const ServicesPage: React.FC = () => {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isClickable = target.tagName === 'BUTTON' || 
-                         target.tagName === 'A' || 
-                         target.closest('button') || 
-                         target.closest('a') ||
-                         target.hasAttribute('onclick') ||
-                         target.style.cursor === 'pointer' ||
-                         window.getComputedStyle(target).cursor === 'pointer';
-      setIsHovering(isClickable);
+
+      const isClickable =
+        target.tagName === "BUTTON" ||
+        target.tagName === "A" ||
+        !!target.closest("button") ||
+        !!target.closest("a") ||
+        target.hasAttribute("onclick") ||
+        target.style.cursor === "pointer" ||
+        window.getComputedStyle(target).cursor === "pointer";
+
+      // ✅ must be boolean (fix TS2345)
+      setIsHovering(!!isClickable);
     };
 
     const handleMouseLeave = () => {
       setIsHovering(false);
     };
 
-    document.addEventListener('mousemove', handleMouseMove, { passive: true });
-    document.addEventListener('mouseover', handleMouseOver, { passive: true });
-    document.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-    
+    document.addEventListener("mousemove", handleMouseMove, { passive: true });
+    document.addEventListener("mouseover", handleMouseOver, { passive: true });
+    document.addEventListener("mouseleave", handleMouseLeave, { passive: true });
+
     setIsVisible(true);
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleMouseOver);
-      document.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseover", handleMouseOver);
+      document.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, []);
 
@@ -71,7 +70,7 @@ const ServicesPage: React.FC = () => {
       features: ["React & Next.js", "TypeScript", "Tailwind CSS", "API Integration"],
       price: "$2,500",
       gradient: "from-blue-500 via-purple-500 to-pink-500",
-      bgGradient: "from-blue-900/20 via-purple-900/20 to-pink-900/20"
+      bgGradient: "from-blue-900/20 via-purple-900/20 to-pink-900/20",
     },
     {
       id: 2,
@@ -81,7 +80,7 @@ const ServicesPage: React.FC = () => {
       features: ["React Native", "iOS & Android", "Push Notifications", "App Store Deploy"],
       price: "$3,000",
       gradient: "from-green-500 via-emerald-500 to-teal-500",
-      bgGradient: "from-green-900/20 via-emerald-900/20 to-teal-900/20"
+      bgGradient: "from-green-900/20 via-emerald-900/20 to-teal-900/20",
     },
     {
       id: 3,
@@ -91,7 +90,7 @@ const ServicesPage: React.FC = () => {
       features: ["AWS/Azure Setup", "Docker & K8s", "CI/CD Pipeline", "Auto Scaling"],
       price: "$2,000",
       gradient: "from-orange-500 via-red-500 to-pink-500",
-      bgGradient: "from-orange-900/20 via-red-900/20 to-pink-900/20"
+      bgGradient: "from-orange-900/20 via-red-900/20 to-pink-900/20",
     },
     {
       id: 4,
@@ -101,7 +100,7 @@ const ServicesPage: React.FC = () => {
       features: ["GPT Integration", "Computer Vision", "Natural Language", "Data Analysis"],
       price: "$4,000",
       gradient: "from-purple-500 via-violet-500 to-indigo-500",
-      bgGradient: "from-purple-900/20 via-violet-900/20 to-indigo-900/20"
+      bgGradient: "from-purple-900/20 via-violet-900/20 to-indigo-900/20",
     },
     {
       id: 5,
@@ -111,7 +110,7 @@ const ServicesPage: React.FC = () => {
       features: ["Speed Optimization", "SEO Enhancement", "Core Web Vitals", "Bundle Analysis"],
       price: "$1,500",
       gradient: "from-yellow-500 via-orange-500 to-red-500",
-      bgGradient: "from-yellow-900/20 via-orange-900/20 to-red-900/20"
+      bgGradient: "from-yellow-900/20 via-orange-900/20 to-red-900/20",
     },
     {
       id: 6,
@@ -121,46 +120,49 @@ const ServicesPage: React.FC = () => {
       features: ["Security Audit", "Penetration Testing", "Automated Testing", "Code Review"],
       price: "$1,800",
       gradient: "from-cyan-500 via-blue-500 to-indigo-500",
-      bgGradient: "from-cyan-900/20 via-blue-900/20 to-indigo-900/20"
-    }
+      bgGradient: "from-cyan-900/20 via-blue-900/20 to-indigo-900/20",
+    },
   ];
 
   const features = [
     { icon: Layers, title: "Modern Architecture", desc: "Scalable & maintainable code" },
     { icon: Palette, title: "Stunning Design", desc: "Pixel-perfect interfaces" },
     { icon: Cpu, title: "High Performance", desc: "Optimized for speed" },
-    { icon: Sparkles, title: "Innovation", desc: "Cutting-edge solutions" }
+    { icon: Sparkles, title: "Innovation", desc: "Cutting-edge solutions" },
   ];
 
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden" ref={containerRef}>
       {/* Animated cursor follower - completely non-interfering */}
-      <div 
+      <div
         className={`fixed rounded-full pointer-events-none z-30 transition-all duration-150 ease-out ${
-          isHovering 
-            ? 'w-8 h-8 bg-gradient-to-r from-purple-400/30 to-pink-400/30 opacity-60' 
-            : 'w-4 h-4 bg-gradient-to-r from-purple-400/40 to-pink-400/40 opacity-40'
+          isHovering
+            ? "w-8 h-8 bg-gradient-to-r from-purple-400/30 to-pink-400/30 opacity-60"
+            : "w-4 h-4 bg-gradient-to-r from-purple-400/40 to-pink-400/40 opacity-40"
         }`}
         style={{
           left: mousePosition.x - (isHovering ? 16 : 8),
           top: mousePosition.y - (isHovering ? 16 : 8),
           transform: `scale(${isVisible ? 1 : 0})`,
-          pointerEvents: 'none'
+          pointerEvents: "none",
         }}
       />
 
       {/* Dynamic background grid */}
       <div className="fixed inset-0 opacity-20">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `
-            radial-gradient(circle at 25% 25%, #6366f1 0%, transparent 50%),
-            radial-gradient(circle at 75% 75%, #ec4899 0%, transparent 50%),
-            radial-gradient(circle at 75% 25%, #8b5cf6 0%, transparent 50%),
-            radial-gradient(circle at 25% 75%, #06b6d4 0%, transparent 50%)
-          `,
-          backgroundSize: '100% 100%',
-          animation: 'pulse 8s ease-in-out infinite'
-        }} />
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              radial-gradient(circle at 25% 25%, #6366f1 0%, transparent 50%),
+              radial-gradient(circle at 75% 75%, #ec4899 0%, transparent 50%),
+              radial-gradient(circle at 75% 25%, #8b5cf6 0%, transparent 50%),
+              radial-gradient(circle at 25% 75%, #06b6d4 0%, transparent 50%)
+            `,
+            backgroundSize: "100% 100%",
+            animation: "pulse 8s ease-in-out infinite",
+          }}
+        />
       </div>
 
       {/* Hero Section */}
@@ -171,18 +173,21 @@ const ServicesPage: React.FC = () => {
               <Sparkles className="w-4 h-4 mr-2 text-purple-400" />
               <span className="text-sm font-medium">Premium Services</span>
             </div>
-            
+
             <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
               Our Services
             </h1>
-            
+
             <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
               Transform your ideas into reality with our cutting-edge development services
             </p>
 
             <div className="flex flex-wrap justify-center gap-6 mb-16">
               {features.map((feature, index) => (
-                <div key={index} className="flex items-center bg-white/5 backdrop-blur-sm rounded-2xl px-6 py-4 border border-white/10 hover:border-purple-500/50 transition-all duration-300 hover:scale-105">
+                <div
+                  key={index}
+                  className="flex items-center bg-white/5 backdrop-blur-sm rounded-2xl px-6 py-4 border border-white/10 hover:border-purple-500/50 transition-all duration-300 hover:scale-105"
+                >
                   <feature.icon className="w-6 h-6 text-purple-400 mr-3" />
                   <div>
                     <div className="font-semibold text-white">{feature.title}</div>
@@ -203,12 +208,17 @@ const ServicesPage: React.FC = () => {
               <div
                 key={service.id}
                 className={`group relative overflow-hidden rounded-3xl border border-white/10 transition-all duration-500 hover:scale-105 hover:border-white/30 ${
-                  activeService === index ? 'ring-2 ring-purple-500' : ''
+                  activeService === index ? "ring-2 ring-purple-500" : ""
                 }`}
                 onMouseEnter={() => setActiveService(index)}
                 style={{
-                  background: `linear-gradient(135deg, ${service.bgGradient.replace('from-', 'rgba(').replace('via-', ', rgba(').replace('to-', ', rgba(').replace('900/20', '900, 0.2)')})`,
-                  animation: `float ${3 + index * 0.5}s ease-in-out infinite`
+                  // keeping your original background logic as-is
+                  background: `linear-gradient(135deg, ${service.bgGradient
+                    .replace("from-", "rgba(")
+                    .replace("via-", ", rgba(")
+                    .replace("to-", ", rgba(")
+                    .replace("900/20", "900, 0.2)")})`,
+                  animation: `float ${3 + index * 0.5}s ease-in-out infinite`,
                 }}
               >
                 {/* Animated background */}
@@ -232,9 +242,7 @@ const ServicesPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <p className="text-gray-300 mb-6 text-lg leading-relaxed">
-                    {service.description}
-                  </p>
+                  <p className="text-gray-300 mb-6 text-lg leading-relaxed">{service.description}</p>
 
                   <div className="space-y-3 mb-8">
                     {service.features.map((feature, featureIndex) => (
@@ -245,7 +253,7 @@ const ServicesPage: React.FC = () => {
                     ))}
                   </div>
 
-                  <button 
+                  <button
                     className={`w-full bg-gradient-to-r ${service.gradient} text-white font-semibold py-4 px-6 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center justify-center group/btn cursor-pointer`}
                     onClick={() => console.log(`Clicked ${service.title}`)}
                   >
@@ -276,7 +284,7 @@ const ServicesPage: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {['Discovery', 'Design', 'Development', 'Deployment'].map((step, index) => (
+            {["Discovery", "Design", "Development", "Deployment"].map((step, index) => (
               <div key={index} className="relative">
                 <div className="text-center">
                   <div className="relative inline-block mb-6">
@@ -311,9 +319,9 @@ const ServicesPage: React.FC = () => {
             <p className="text-xl text-gray-400 mb-8 max-w-2xl mx-auto">
               Let's discuss your ideas and create something amazing together
             </p>
-            <button 
+            <button
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/25 flex items-center justify-center mx-auto group cursor-pointer"
-              onClick={() => console.log('Free consultation clicked')}
+              onClick={() => console.log("Free consultation clicked")}
             >
               <span className="mr-2">Get Free Consultation</span>
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -322,7 +330,8 @@ const ServicesPage: React.FC = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      {/* ✅ Vite/React: no styled-jsx */}
+      <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
           50% { transform: translateY(-10px) rotate(1deg); }
